@@ -10,6 +10,17 @@ The packages are divided in two folders `mkdocs-plugins` and `mkdocs-themes`, re
 
 You will find below some useful information on how to build and publish your own plugin or your own theme.
 
+## PyPi links to pakcages
+
+**Plugins**
+
+* (mkdocs-izsam-search)[https://pypi.org/project/mkdocs-izsam-search/]
+* (mkdocs-izsam-video)[https://pypi.org/project/mkdocs-izsam-video/]
+
+**Theme**
+
+* (mkdocs-bionformatic-izsam-theme)[https://pypi.org/project/mkdocs-bionformatic-izsam-theme/]
+
 ## Create pip packages
 
 Source: [How to write your own Python Package and publish it on PyPi](https://thucnc.medium.com/how-to-publish-your-own-python-package-to-pypi-4318868210f9)
