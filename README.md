@@ -25,7 +25,7 @@ You will find below some useful information on how to build and publish your own
 
 Source: [How to write your own Python Package and publish it on PyPi](https://thucnc.medium.com/how-to-publish-your-own-python-package-to-pypi-4318868210f9)
 
-### Create a Pypi account
+### Create a PyPi account
 
 If you already have a PyPi account (and still remember your username/password, of course), you can skip this step. Otherwise, please go to PyPi homepage and register new account instantly.
 
