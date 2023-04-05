@@ -4,7 +4,7 @@ Collection of MkDocs packages we use to build our documentation.
 
 ## Introduction
 
-We use (MkDocs)[https://www.mkdocs.org] to make documentation of our projects and in this repo we are collecting all packages internally developed to fit some particular needs.
+We use [MkDocs](https://www.mkdocs.org) to make documentation of our projects and in this repo we are collecting all packages internally developed to fit some particular needs.
 
 The packages are divided in two folders `mkdocs-plugins` and `mkdocs-themes`, respectively for MkDocs plugins and MkDocs themes (actually we have just one theme :D).
 
@@ -14,12 +14,12 @@ You will find below some useful information on how to build and publish your own
 
 **Plugins**
 
-* (mkdocs-izsam-search)[https://pypi.org/project/mkdocs-izsam-search/]
-* (mkdocs-izsam-video)[https://pypi.org/project/mkdocs-izsam-video/]
+* [mkdocs-izsam-search](https://pypi.org/project/mkdocs-izsam-search/)
+* [mkdocs-izsam-video](https://pypi.org/project/mkdocs-izsam-video/)
 
 **Theme**
 
-* (mkdocs-bionformatic-izsam-theme)[https://pypi.org/project/mkdocs-bionformatic-izsam-theme/]
+* [mkdocs-bionformatic-izsam-theme](https://pypi.org/project/mkdocs-bionformatic-izsam-theme/)
 
 ## Create pip packages
 
