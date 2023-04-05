@@ -46,6 +46,6 @@ More information about plugins in the [MkDocs documentation][mkdocs-plugins].
 
 ## See Also
 
-[mkdocs-plugins]: http://www.mkdocs.org/user-guide/plugins/
-[mkdocs-template]: https://www.mkdocs.org/user-guide/custom-themes/#template-variables
-[mkdocs-block]: https://www.mkdocs.org/user-guide/styling-your-docs/#overriding-template-blocks
+* [mkdocs-plugins](http://www.mkdocs.org/user-guide/plugins/)
+* [mkdocs-template](https://www.mkdocs.org/user-guide/custom-themes/#template-variables)
+* [mkdocs-block](https://www.mkdocs.org/user-guide/styling-your-docs/#overriding-template-blocks)
