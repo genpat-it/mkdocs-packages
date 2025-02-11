@@ -12,42 +12,87 @@ pip install mkdocs-izsam-search
 
 ## Theme customization
 
-The theme allows you to customize Title and top right label using your mdkdocs configuration file `mkdocs.yml`.
+The theme allows you to customize platform title and footer contents by using your mdkdocs configuration file `mkdocs.yml`.
 
 ```yaml
 extra:
-  platform_title: Piattaforma GenPat
-  header_tool_label: Wiki
-  header_tool_label_mobile: Wiki
+  platform_title: Piattaforma GenPat, Wiki
+  language: it
+  useful_links:
+    link_1:
+      label: CRN Sequenze Genomiche
+      url: https://www.izs.it/IZS/Eccellenza/Centri_nazionali/CRN_-_Sequenze_Genomiche
+    link_2:
+      label: IZSAM "G. Caporale"
+      url: https://www.izs.it
+  support:
+    support_1:
+      label: bioinformatica@izs.it
+      url: mailto:bioinformatica@izs.it
+    support_2:
+      label: +39 0861 3321
+      url: tel:+3908613321
+  tools:
+    tool_1:
+      icon: iconic-print
+      label: Versione PDF
+      target: _blank
+      url: https://genpat.izs.it/genpat_wiki/en/pdf/genpat_platform_wiki.pdf
+  copyright: IZSAM "G. Caporale"
 ```
 
-## Theme localization
+## Multi language support
 
-The theme supports a lightweight localization system written in javascript. At the moment it supports Italian and English but you are free to add every language by duplicate the existing `js/theme-langauges/theme-loc-en.js` file and renaming it with your language a for example `js/theme-langauges/theme-loc-it.js`. Edit/override `js/theme-localization.js` to add more fields and translations.
+The theme supports a localization system written in javascript. At the moment it supports Italian and English but it is possible to add new languages.
 
-> Please refer to MkDocs documentation on how to customize a theme [https://www.mkdocs.org/user-guide/customizing-your-theme/#customizing-your-theme](https://www.mkdocs.org/user-guide/customizing-your-theme/#customizing-your-theme).
+### Add a language
 
-To activate the localization, add a value to `locale` in `config.theme`:
+1. Create a new language file in `js/i18n` folder by using `en.js` or `it.js` as template and translate values.
+2. List it in `js/languages-builder.js`
+3. Pack language files in `languages.js` 
 
-```yml
-theme:
-  name: bioinformatic-izsam-theme
-  locale: it
+#### Pack language files
+
+To pack files we use [**packjs**](https://www.npmjs.com/package/packjs) npm library:
+
+```bash
+npm install --save-dev packjs
 ```
 
-Here the code used in the theme (`base.html`) to hold the localization:
+Then from `js` folder:
+
+```bash
+  packjs i18n/languages-builder.js languages.js
+```
+
+The code will loop through the `wiki.languages` object keys and for each key, it will add an option to the language switcher. By selecting an available language, the code will redirect to the language subfolder.
+
+The theme is designed to handle different builds for each language. Specifically, we will have the documentation in Italian hosted under `https://mywiki.eu/it`, the documentation in English under `https://mywiki.eu/en`, and so on.
+
+> **Please note:** If you have a single language site, just remove the languages you don't need from `js/languages.js`. If you want to modify the behavior of the language switcher, you can override the `js/locales.js` file.
+
+### Language definition
+
+Each build relies on `config.extra.language` parameter to define the wiki language (the default is `en`), on `base.html` we set the html `lang` attribute and a global javascript constant `config_lang` with that value:
 
 ```html
-{% if config.theme.locale %}
-  {% set js_path = 'js/theme-languages/theme-loc-' ~ config.theme.locale ~ '.js' %}
-  <script src="{{ js_path|url }}"></script>
-  <script src="{{ 'js/theme-localization.js'|url }}"></script>
-{% endif %}
+<html lang="{{ config.extra.language|default('en') }}">
 ```
 
-#### Important!
+```javascript
+const config_lang = "{{ config.extra.language|default('en') }}";
+```
 
-The `locale` variable is used also to set search functionalities, there are some limitations on the values it can assume. Allowed languages are: `ar`, `da`, `de`, `du`, `es`, `fi`, `fr`, `hi`, `hu`, `it`, `ja`, `jp`, `nl`, `no`, `pt`, `ro`, `ru`, `sv`, `ta`, `th`, `tr`, `vi`, `zh`. If you want to use a different language, you should not to use **mkdocs-izsam-search** plugin and customize the `base.html` file removing all the code related to it.
+The `config.extra.language` variable is used also to set **search functionalities**. There are some limitations on the values it can assume. Allowed languages are: `ar`, `da`, `de`, `du`, `es`, `fi`, `fr`, `hi`, `hu`, `it`, `ja`, `jp`, `nl`, `no`, `pt`, `ro`, `ru`, `sv`, `ta`, `th`, `tr`, `vi`, `zh`. If you want to use a different language, you should not to use **mkdocs-izsam-search** plugin and customize the `base.html` file removing all the code related to it.
+
+```html
+{% if config.extra.language and not 'en' in config.extra.language %}
+  <script src="{{ 'js/lunr-languages/lunr.stemmer.support.js'|url }}"></script>
+  <script src="{{ 'js/lunr-languages/lunr.multi.js'|url }}"></script>
+  {% set js_path = 'js/lunr-languages/lunr.' ~ config.extra.language ~ '.js' %}
+  <script src="{{ js_path|url }}"></script>
+{% endif %}
+```
 
 ## Theme features
 
@@ -64,7 +109,7 @@ If you need to use a caption for images, you can use the markdown image title si
 To use icons inline inside the contents, please add the alt attribute `inline-icon`:
 
 ```
-![inline-icon](icona.png)
+![inline-icon](icon.png)
 ```
 
 > Images will have inherent size and displayed inline.
@@ -77,6 +122,6 @@ To use diagram inside the contents as images, please add the alt attribute `diag
 ![diagram](file.png)
 ```
 
-#### Expand image
+## Credits
 
-`zoom-img.js` allows images to be expanded on click.
+For the icons, we are using the free [Iconic](https://iconic.app/) package, converted to a font with the [IcoMoon app](https://icomoon.io/app/#/select).

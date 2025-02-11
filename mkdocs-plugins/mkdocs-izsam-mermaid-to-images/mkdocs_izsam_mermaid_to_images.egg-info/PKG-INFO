@@ -1,0 +1,96 @@
+Metadata-Version: 2.1
+Name: mkdocs-izsam-mermaid-to-images
+Version: 1.0.8
+Summary: MkDocs plugin to convert Mermaid code blocks to images.
+Home-page: UNKNOWN
+Author: Alessandro De Luca
+Author-email: al.deluca@izs.it
+License: MIT
+Keywords: MkDocs,Mermaid,Mermaid to images
+Platform: UNKNOWN
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
+# MkDocs IZSAM Mermaid to images
+
+This plugin processes each page's Markdown content, finds Mermaid code blocks, converts them to images using `mermaid.cli`, and replaces the code blocks with image references. The image format can be specified in the `mkdocs.yml` configuration file.
+
+## Installation
+
+Install dependencies:
+
+```bash
+npm install -g @mermaid-js/mermaid-cli
+```
+
+Install the package with pip:
+
+```bash
+pip install mkdocs-izsam-mermaid-to-images
+```
+
+Enable the plugin in the `mkdocs.yml` file:
+
+```yaml
+plugins:
+  - search
+  - mkdocs-izsam-mermaid-to-images:
+        output_dir: mermaid_images # Optional, defaults to 'mermaid_images'
+        image_format: svg # Optional, defaults to 'svg'
+        image_class: mmd  # Optional, defaults to 'mmd'
+        scale: 3 # Optional, defaults to '1'
+        mermaid_config:
+            theme: default
+            fontFamily: "Arial, sans-serif"
+            fontSize: 16
+```
+
+> See how to use [MkDocs Plugins](https://www.mkdocs.org/dev-guide/plugins/#using-plugins)
+
+# Change log
+
+## [1.0.8] - 2024-09-18
+
+### Scale factor option
+Added a scale factor option in order to generate better quality png images. Please consider that only when the output format is set to be a png the scale factor will be applied.
+
+## [1.0.7] - 2024-09-17
+
+### Added support to Mermaid configuration options
+Needed to import json module
+
+## [1.0.6] - 2024-09-17
+
+### Added support to Mermaid configuration options
+
+## [1.0.5] - 2024-09-17
+
+### Added class for generate img tag
+Added a class to the generated <img> tag and made it configurable by the user, default is 'mmd'.
+
+## [1.0.4] - 2024-09-17
+
+### Changed the way images directory are generated
+Images directory now is generated in the same directory as the HTML file where the Mermaid diagrams are declared. This way, the image paths will be relative to the page, avoiding problems with paths.
+
+## [1.0.3] - 2024-09-17
+
+### Fix on image paths
+The plugin was generating the image paths relative to the current page, but it should generate them relative to the root of the site.
+
+## [1.0.2] - 2024-09-17
+
+### Fix on image paths
+Generated image files are not being found at the expected paths.
+
+## [1.0.1] - 2024-09-17
+
+### Setup bug fix and README changes
+Bug fix for setup entry_points section; fix for error in configuration instructions.
+
+## [1.0] - 2024-09-17
+
+### First release
+
+

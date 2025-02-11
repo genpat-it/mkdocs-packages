@@ -1,0 +1,11 @@
+LICENSE.txt
+README.md
+setup.py
+mkdocs_izsam_mermaid_to_images/__init__.py
+mkdocs_izsam_mermaid_to_images/plugin.py
+mkdocs_izsam_mermaid_to_images.egg-info/PKG-INFO
+mkdocs_izsam_mermaid_to_images.egg-info/SOURCES.txt
+mkdocs_izsam_mermaid_to_images.egg-info/dependency_links.txt
+mkdocs_izsam_mermaid_to_images.egg-info/entry_points.txt
+mkdocs_izsam_mermaid_to_images.egg-info/requires.txt
+mkdocs_izsam_mermaid_to_images.egg-info/top_level.txt

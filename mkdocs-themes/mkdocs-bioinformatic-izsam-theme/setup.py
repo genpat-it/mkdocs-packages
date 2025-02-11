@@ -7,7 +7,7 @@ with open('README.md') as readme_file:
 with open('HISTORY.md') as history_file:
     HISTORY = history_file.read()
 
-VERSION = '0.1.9.2'
+VERSION = '1.0.4'
 
 setup(
     name='mkdocs-bionformatic-izsam-theme',

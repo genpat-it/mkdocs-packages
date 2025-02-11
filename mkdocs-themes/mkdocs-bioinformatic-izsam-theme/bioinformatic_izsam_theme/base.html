@@ -6,7 +6,7 @@
   to find out more.
 -->
 <!DOCTYPE html>
-<html lang="{{ config.theme.locale|default('en') }}">
+<html lang="{{ config.extra.language|default('en') }}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -29,9 +29,15 @@
   -->
   <link rel="stylesheet" href="{{ 'css/normalize.css'|url }}">
   <link rel="stylesheet" href="{{ 'css/skeleton.css'|url }}">
-  <link rel="stylesheet" href="{{ 'css/pigments.css'|url }}">
-  <link rel="stylesheet" href="{{ 'css/theme.css'|url }}">
+  <link rel="stylesheet" href="{{ 'css/iconic.css'|url }}" />
+  <link rel="stylesheet" href="{{ 'css/pygments-rainbow-dash.css'|url }}">
+  <link rel="stylesheet" href="{{ 'css/vars.css'|url }}" />
+  <link rel="stylesheet" href="{{ 'css/base.css'|url }}">
+  <link rel="stylesheet" href="{{ 'css/wiki.css'|url }}">
+  <link rel="stylesheet" href="{{ 'css/header.css'|url }}">
   <link rel="stylesheet" href="{{ 'css/footer.css'|url }}">
+  <!-- scrolly -->
+  <link rel="stylesheet" href="{{ 'js/scrolly/scrolly.css'|url }}" type="text/css" />
 
   <!--
     extra_ess contains paths to CSS files in the users
@@ -44,9 +50,7 @@
     <link href="{{ path|url }}" rel="stylesheet">
   {% endfor %}
 
-  {% block extrahead %}
-    <script>var base_url = '{{ base_url }}';</script>
-  {% endblock %}
+  {% block extrahead %}{% endblock %}
 
   <!--
     extra_javascript contains paths to JavaScript files in the
@@ -61,50 +65,17 @@
 
 </head>
 
-<body>
-  <header class="header">
-    <div class="top-bar">
-      <div class="platform-heading">
-        <div class="platform-logo">
-          <img src="{{ base_url }}/img/piattaforma-genpat-logo.svg" alt="Logo">
-        </div>
-        <div class="platform-title">
-          {% if config.extra.platform_title %}
-            <h1>{{ config.extra.platform_title }}</h1>
-          {% else %}
-            <h1>Platform title</h1>
-          {% endif %}
-        </div>
-      </div>
-      <div class="toolbar">
-        <div class="tool tool-docs-navigation">
-          <div class="tool-trigger" onclick="toggleDocsNav()">
-            <img src="{{ base_url }}/img/iconic/menu-white.svg" alt="Navigation icon">
-          </div>
-        </div>
-        <div class="tool tool-search">
-          <div class="tool-label">
-            {% if config.extra.header_tool_label_mobile %}
-              {{ config.extra.header_tool_label_mobile }}
-            {% else %}
-              Wiki
-            {% endif %}
-          </div>
-          <div class="tool-trigger" onclick="toggleModalSearch()">
-            <img src="{{ base_url }}/img/iconic/search-white.svg" alt="Search icon">
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
+<body class="wiki">
+  
+  {% include "header.html" %}
 
   <section class="main">
     <div class="container">
       <div class="row">
         <div class="two columns columns-docs-navigation">
           <div class="docs-navigation">
-            <div class="close" onclick="toggleDocsNav()">
-              <img src="{{ base_url }}/img/iconic/close-white.svg" alt="Close">
+            <div class="close" onclick="wiki.theme.toggleDocsNav()">
+              <i class="iconic iconic-close-circle"></i>
             </div>
             <!--
               Create the navigation for the documentation.
@@ -115,7 +86,7 @@
 
               See the nav.html file for more details about how this works.
             -->
-            <h6 id="docs-topics-title">Topics</h6>
+            <h6 id="docs-topics-title" data-i18n-key="topics">Topics</h6>
             <ul>
             {% for nav_item in nav %}
               {% include "nav.html" %}
@@ -133,16 +104,23 @@
         <div class="two columns columns-table-of-contents">
           <div class="table-of-contents">
             {% if page.toc %}
-            <h6 id="page-contents-title">Contents</h6>
+            <h6 data-i18n-key="contents" id="page-contents-title">Contents</h6>
             <ul>
-            {% for toc_item in page.toc %}
-                <li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
-                {% for toc_item in toc_item.children %}
-                  <ul>
-                    <li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
-                  </ul>
-                {% endfor %}
-            {% endfor %}
+              {% for toc_item in page.toc %}
+                {% if toc_item.children %}
+                  <li class="has-children">
+                    <a href="{{ toc_item.url }}" onclick="wiki.theme.toggleTocNavChild()">{{
+                      toc_item.title }}</a>
+                    <ul class="nav-child">
+                      {% for child in toc_item.children %}
+                        <li><a href="{{ child.url }}">{{ child.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                  {% else %}
+                  <li><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
+                {% endif %}
+              {% endfor %}
             </ul>
             {% endif %}
           </div>
@@ -158,31 +136,16 @@
     action and methods match below.
   -->
   {% if 'izsam-search' in config['plugins'] %}
-  <div class="modal modal-search">
-    <div class="modal-inner-box">
-      <div class="close" onclick="toggleModalSearch()">
-        <img src="{{ base_url }}/img/iconic/close-circle.svg" alt="Close modal">
-      </div>
-      <div class="modal-inner-content search" role="search">
-        <h4 id="modal-search-title">Search within the documentation</h4>
-        <form action="{{ 'search.html'|url }}" method="get">
-          <input id="modal-search" type="search" name="q" placeholder="Use keywords..." onkeyup="toggleButton()">
-          <button type="submit" disabled>Search</button>
-        </form>
-      </div>
+  <section class="modal">
+    <div class="modal-contents">
+      <div class="modal-close"><i class="iconic iconic-close-circle"></i></div>
+      <div class="modal-header"></div>
+      <div class="modal-body"></div>
+      <div class="modal-feedback"></div>
     </div>
-  </div>
-  {% endif %}
+  </section>
 
-  <div class="modal modal-img">
-    <div class="modal-inner-box">
-      <div class="close" onclick="toggleModalImg()">
-        <img src="{{ base_url }}/img/iconic/close-circle.svg" alt="Close modal">
-      </div>
-      <div class="modal-inner-content" id="modal-inner-content-image">
-      </div>
-    </div>
-  </div>
+  {% endif %}
 
   <!--
     Implement the previous and next links to cycle through the pages.
@@ -196,10 +159,10 @@
           <a href="{{ page.previous_page.url|url }}" title="{{ page.previous_page.title }}">
             <div class="internal-nav-previous">
               <div class="arrow arrow-left">
-                <img src="{{ base_url }}/img/iconic/arrow-left-white.svg" alt="Left arrow icon">
+                <i class="iconic iconic-arrow-left"></i>
               </div>
               <div class="internal-nav-link-previous-label">
-                <h6>Previous</h6>
+                <h6 data-i18n-key="previous">Previous</h6>
                 {% if page.previous_page.parent %}
                 <h5>{{ page.previous_page.parent.title }}, {{ page.previous_page.title }}</h5>
                 {% else %}
@@ -217,7 +180,7 @@
           <a href="{{ page.next_page.url|url }}" title="{{ page.next_page.title }}">
             <div class="internal-nav-next">
               <div class="internal-nav-link-next-label">
-                <h6>Next</h6>
+                <h6 data-i18n-key="next">Next</h6>
                 {% if page.next_page.parent %}
                 <h5>{{ page.next_page.parent.title }}, {{ page.next_page.title }}</h5>
                 {% else %}
@@ -225,7 +188,7 @@
                 {% endif %}
               </div>
               <div class="arrow arrow-right">
-                <img src="{{ base_url }}/img/iconic/arrow-right-white.svg" alt="Right arrow icon">
+                <i class="iconic iconic-arrow-right"></i>
               </div>
             </div>
           </a>
@@ -237,7 +200,7 @@
     </div>
   </section>
   {% endif %}
-  <div class="overlay-utility" onclick="toggleDocsNav()"></div>
+  <div class="overlay-utility" onclick="wiki.theme.toggleDocsNav()"></div>
 
   {% include "footer.html" %}
 
@@ -270,26 +233,34 @@
     {% endif %}
   -->
 
+  <script>
+    const base_url = '{{ base_url }}';
+    const site_url = '{{ config.site_url }}';
+    const config_lang = "{{ config.extra.language|default('en') }}";
+    const wiki = {};
+  </script>
+
+  <script src="{{ 'js/scrolly/scrolly.js'|url }}"></script>
+  <script src="{{ 'js/utils.js'|url }}"></script>
   <!--
     To include static assets from our theme, just add
     {{ base_url }} beforehand which will be the relative path to
     the root of the documentation.
   -->
-  {% if config.theme.locale %}
-    {% set js_path = 'js/theme-languages/theme-loc-' ~ config.theme.locale ~ '.js' %}
-    <script src="{{ js_path|url }}"></script>
-    <script src="{{ 'js/theme-localization.js'|url }}"></script>
-  {% endif %}
+  <script src="{{ 'js/languages.js'|url }}"></script>
+  <script src="{{ 'js/locales.js'|url }}"></script>
   <script src="{{ 'search/search_config.js'|url }}"></script>
   <script src="{{ 'search/search_docs.js'|url }}"></script>
   <script src="{{ 'js/lunr.js'|url }}"></script>
-  {% if config.theme.locale and not 'en' in config.theme.locale %}
+  {% if config.extra.language and not 'en' in config.extra.language %}
     <script src="{{ 'js/lunr-languages/lunr.stemmer.support.js'|url }}"></script>
-    {% set js_path = 'js/lunr-languages/lunr.' ~ config.theme.locale ~ '.js' %}
+    <script src="{{ 'js/lunr-languages/lunr.multi.js'|url }}"></script>
+    {% set js_path = 'js/lunr-languages/lunr.' ~ config.extra.language ~ '.js' %}
     <script src="{{ js_path|url }}"></script>
   {% endif %}
+  <script src="{{ 'js/modal.js'|url }}"></script>
   <script src="{{ 'js/search.js'|url }}"></script>
-  <script src="{{ 'js/zoom-img.js'|url }}"></script>
   <script src="{{ 'js/theme.js'|url }}"></script>
+  <script src="{{ 'js/footer.js'|url }}"></script>
 </body>
 </html>

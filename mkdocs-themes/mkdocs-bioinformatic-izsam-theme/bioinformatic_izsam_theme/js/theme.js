@@ -1,134 +1,189 @@
-/*
- * This JavaScript doesn't do anything. The file exists just to demonstrate
- * including static assets from the HTML in themes.
- */
+wiki.theme = {};
 
-const bodyEl = document.body;
-const html = document.documentElement;
+wiki.theme.body = document.body;
+wiki.theme.html = document.documentElement;
 
-var viewportHeight;
-var navChild;
-var setIntervalVar;
-var tableOfContents = document.getElementsByClassName("table-of-contents")[0];
-var tableOfContentsContainer = document.querySelector(".columns-table-of-contents");
-var searchResults = document.getElementById("mkdocs-search-results");
-var page404 = document.getElementById("page404");
-var mainSection = document.getElementsByClassName("main")[0];
-var mainSectionHeight;
-var headerSection = document.getElementsByClassName("header")[0];
-var headerSectionHeight;
-var sticky = tableOfContentsContainer.offsetTop;
-var stickyController = mainSection.offsetTop;
-var internalLinks = tableOfContents.getElementsByTagName("a");
-var contentsEl = document.querySelector(".contents");
-var images = contentsEl.querySelectorAll('img');
+wiki.theme.viewportHeight;
+wiki.theme.tableOfContents = document.querySelector('.table-of-contents');
+wiki.theme.tableOfContentsContainer = document.querySelector('.columns-table-of-contents');
+wiki.theme.tocInViewport = '';
+wiki.theme.docsNavigationContainer = document.querySelector('.columns-docs-navigation');
+wiki.theme.searchResults = document.getElementById('mkdocs-search-results');
+wiki.theme.page404 = document.getElementById('page404');
+wiki.theme.mainSection = document.querySelector('.main');
+wiki.theme.mainSectionHeight;
+wiki.theme.headerSection = document.querySelector('.header');
+wiki.theme.sticky = wiki.theme.tableOfContentsContainer.offsetTop;
+wiki.theme.stickyController = wiki.theme.mainSection.offsetTop;
+wiki.theme.internalLinks = wiki.theme.tableOfContents.querySelectorAll('a');
+wiki.theme.contentsEl = document.querySelector('.contents');
+wiki.theme.images = wiki.theme.contentsEl.querySelectorAll('img');
 
-bodyEl.onload = function() {
-  mainSectionHeight = mainSection.clientHeight;
-  headerSectionHeight = headerSection.clientHeight;
-  viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  var navChild = document.getElementsByClassName("nav-child");
-  for (var i = 0; i < navChild.length; i++) {
-    var navChildItemActive = navChild[i].getElementsByClassName("active");
-    if (navChildItemActive.length) {
-        navChild[i].parentElement.classList.add("show-nav-child");
-    }
-  }
-  if (page404) {
-    bodyEl.classList.add("page-404");
-  }
-  if (searchResults) {
-    bodyEl.classList.add("search-page");
-  }
+wiki.theme.toggleModalImg = function() {
+  wiki.theme.body.classList.toggle('show-modal-img');
 }
 
-bodyEl.onresize = function() {
-  viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  mainSectionHeight = mainSection.clientHeight;
-  headerSectionHeight = headerSection.clientHeight;
-};
-
-function toggleModalImg() {
-  bodyEl.classList.toggle("show-modal-img");
+wiki.theme.toggleDocsNav = function() {
+  wiki.theme.body.classList.toggle("show-docs-nav");
 }
 
-function toggleModalSearch() {
-  bodyEl.classList.toggle("show-modal-search");
-  setTimeout(function() {
-    document.querySelector("#modal-search").focus();
-  }, 600);
-}
-
-function toggleDocsNav() {
-  bodyEl.classList.toggle("show-docs-nav");
-}
-
-function toggleButton(e) {
+wiki.theme.toggleTocNavChild = function(e) {
   e = e || window.event;
-  var targ = e.target || e.srcElement || e;
+  let targ = e.target || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
-  var parent = targ.parentElement;
-  var searchInput = parent.getElementsByTagName('input')[0].value;
-  if (searchInput != "") {
-      parent.getElementsByTagName('button')[0].removeAttribute("disabled");
+  let parent = targ.parentElement;
+  if (parent.classList.contains("show-nav-child")) {
+    parent.classList.remove("show-nav-child");
   } else {
-      parent.getElementsByTagName('button')[0].setAttribute("disabled", null);
+    let tocChildren = document.querySelectorAll('.table-of-contents .has-children');
+    tocChildren.forEach(function(tocChild) {
+      tocChild.classList.remove("show-nav-child");
+    });
+    parent.classList.add("show-nav-child");
   }
 }
 
-function toggleNavChild(e) {
+wiki.theme.toggleNavChild = function(e) {
   e = e || window.event;
-  var targ = e.target || e.srcElement || e;
+  let targ = e.target || e.srcElement || e;
   if (targ.nodeType == 3) targ = targ.parentNode;
-  var parent = targ.parentElement;
+  let parent = targ.parentElement;
   parent.classList.toggle("show-nav-child");
 }
 
-window.addEventListener("scroll", onScroll);
+wiki.theme.isInViewport = function(element) {
+  const rect = element.getBoundingClientRect();
+  return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight / 4 || document.documentElement.clientHeight / 4) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+}
 
-function onScroll() {
-  var scrollValue = window.scrollY || window.scrollTop || document.getElementsByTagName("html")[0].scrollTop;
-  if (mainSectionHeight >= (viewportHeight*2)) {
-    if (scrollValue >= stickyController) {
-      tableOfContentsContainer.classList.add("sticky");
+wiki.theme.onScroll = function() {
+  let scrollValue = window.scrollY || window.scrollTop || document.querySelector('html').scrollTop;
+  if (wiki.theme.mainSectionHeight >= (wiki.theme.viewportHeight*2)) {
+    if (scrollValue >= wiki.theme.stickyController) {
+      wiki.theme.tableOfContentsContainer.classList.add("sticky");
     } else {
-      tableOfContentsContainer.classList.remove("sticky");
+      wiki.theme.tableOfContentsContainer.classList.remove("sticky");
     }
-    if (scrollValue >= ((mainSectionHeight + headerSectionHeight)-viewportHeight)) {
-      tableOfContentsContainer.classList.add("hide");
+    if (scrollValue >= ((wiki.theme.mainSectionHeight + wiki.theme.headerSectionHeight) - wiki.theme.viewportHeight)) {
+      wiki.theme.tableOfContentsContainer.classList.add("hide");
     } else {
-      tableOfContentsContainer.classList.remove("hide");
+      wiki.theme.tableOfContentsContainer.classList.remove("hide");
+    }
+  }
+
+  // Check if .contents h2 and .contents are in the viewport and get their IDs
+  document.querySelectorAll('.contents h2, .contents h3').forEach(function(element) {
+    if (wiki.theme.isInViewport(element)) {
+      wiki.theme.tocInViewport = element.id;
+    }
+  });
+
+  if (wiki.theme.tocInViewport) {
+    document.querySelectorAll('.table-of-contents a').forEach(function(link) {
+      link.classList.remove('current');
+    });
+    let activeLink = document.querySelector('.table-of-contents a[href="#' + wiki.theme.tocInViewport + '"]');
+    if (activeLink) {
+      activeLink.classList.add('current');
+      let toc = document.querySelectorAll('.table-of-contents .has-children');
+      toc.forEach(function(tocItem) {
+        if (tocItem.querySelector('.current')) {
+          tocItem.classList.add('show-nav-child');
+        } else {
+          tocItem.classList.remove('show-nav-child');
+        }
+      });
     }
   }
 }
 
-for (var i = 0; i < internalLinks.length; i++) {
-  internalLinks[i].onclick = function(e) {
+wiki.theme.internalLinks.forEach(function(link) {
+  link.onclick = function(e) {
     e = e || window.event;
-    var targ = e.target || e.srcElement || e;
+    let targ = e.target || e.srcElement || e;
     if (targ.nodeType == 3) targ = targ.parentNode;
-    var internalLinksHref = targ.getAttribute("href");
-    var internalAnchorId = internalLinksHref.replace('#','');
-    var titleEl = document.getElementById(internalAnchorId);
+    let internalLinksHref = targ.getAttribute("href");
+    let internalAnchorId = internalLinksHref.replace('#','');
+    let titleEl = document.getElementById(internalAnchorId);
     titleEl.classList.add("highlight");
+    let parent = targ.parentElement;
+    if (parent.classList.contains("has-children")) {
+      wiki.theme.toggleTocNavChild(e);
+    }
     setTimeout(function(){
-      titleEl.classList.remove("highlight");;
+      titleEl.classList.remove("highlight");
     }, 1200);
   };
-}
+});
 
 /**
  * 
  * Use images title as caption
  */
-for (var i = 0; i < images.length; i++) {
-  var image = images[i];
-  var title = images[i].getAttribute('title');
-  if(title) {
-    console.log(title);
-    var imageContainer = image.parentNode;
-    var caption = document.createElement('figcaption');
-    caption.innerHTML = title;
-    imageContainer.insertBefore(caption, image.nextSibling);
+wiki.theme.images.forEach(function(image) {
+  let title = image.getAttribute('title');
+  if (title) {
+    let imageContainer = image.parentNode;
+    let caption = imageContainer.querySelector('figcaption');
+    if (!caption) {
+      caption = document.createElement('figcaption');
+      caption.innerHTML = title;
+      imageContainer.insertBefore(caption, image.nextSibling);
+    }
   }
-}
+  image.onclick = function(e) {
+    let targ = e.target || e.srcElement || e;
+    if (targ.nodeType == 3) targ = targ.parentNode;
+    e = e || window.event;
+    if (targ.alt != "inline-icon") {
+      let modal = document.querySelector('.modal');
+      modal.classList.add('modal-zoomed-img');
+      let contents = [];
+      let imgModal = document.createElement('div');
+      imgModal.setAttribute('id', 'modal-inner-content-image');
+      let src = targ.src;
+      let alt = targ.alt;
+      let classList = targ.classList;
+      imgModal.innerHTML = "<img src='" + src + "' class='" + classList + "' alt='" + alt + "'>";
+      contents.push(imgModal);
+      let cfg = {
+        contents: contents,
+        additionalCls: 'show-modal-zoomed-img'
+      };
+      wiki.modal.buildModal(cfg);      
+    }
+  };
+});
+
+window.addEventListener("scroll", wiki.theme.onScroll);
+
+wiki.theme.body.onresize = function() {
+  wiki.theme.viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  wiki.theme.mainSectionHeight = wiki.theme.mainSection.clientHeight;
+  wiki.theme.headerSectionHeight = wiki.theme.headerSection.clientHeight;
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  wiki.theme.mainSectionHeight = wiki.theme.mainSection.clientHeight;
+  wiki.theme.headerSectionHeight = wiki.theme.headerSection.clientHeight;
+  wiki.theme.viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  let navChild = document.querySelectorAll('.nav-child');
+  navChild.forEach(function(item) {
+    let navChildItemActive = item.querySelectorAll('.active');
+    if (navChildItemActive.length) {
+      item.parentElement.classList.add('show-nav-child');
+    }
+  });
+
+  if (wiki.theme.page404) {
+    wiki.theme.body.classList.add("page-404");
+  }
+  if (wiki.theme.searchResults) {
+    wiki.theme.body.classList.add("search-page");
+  }
+});

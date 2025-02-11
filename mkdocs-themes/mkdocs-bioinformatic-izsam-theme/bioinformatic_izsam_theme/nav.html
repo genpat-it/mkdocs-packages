@@ -10,7 +10,7 @@
   {% endif %}
 {% else %}
   <li class="has-children">
-    <a class="nav-child-title" onclick="toggleNavChild()">{{ nav_item.title }}</a>
+    <a class="nav-child-title" onclick="wiki.theme.toggleNavChild()">{{ nav_item.title }}</a>
     <ul class="nav-child">
       {% for nav_item in nav_item.children %}
         {% include "nav.html" %}
